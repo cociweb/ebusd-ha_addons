@@ -65,14 +65,13 @@ jobs:
           VERSION=${{ env.VERSION }}
           git add ${{ github.workspace }}/ebusd/CHANGELOG.md ${{ github.workspace }}/ebusd/config.yaml
           git commit -m "Release version $VERSION"
-          git push origin HEAD:main # Update 'main' to your branch name
+          git push origin HEAD:test # Update 'main' to your branch name
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger the builder workflow
-        run: |
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/builder.yaml/dispatches \
-            -d '{"ref":"main"}'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: trigger-builder
+          client-payload: '{"ref": "test"}'
