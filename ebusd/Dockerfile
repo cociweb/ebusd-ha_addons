@@ -3,7 +3,7 @@ FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
-RUN apt get update && \
+RUN apt-get update && \
     apt-get install wget -y
 
 RUN mkdir -p /etc/apt/keyrings && \
