@@ -41,5 +41,5 @@ RUN chmod a+x /run.sh
 CMD [ "/run.sh" ]
 
 # Health check
-HEALTHCHECK --interval=5m --timeout=3s --start-period=90s \
+HEALTHCHECK --interval=1m --timeout=3s --start-period=120s \
    CMD nc -z 127.0.0.1 8888 || exit 1
