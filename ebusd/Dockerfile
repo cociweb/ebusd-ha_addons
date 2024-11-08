@@ -1,18 +1,35 @@
 ARG BUILD_FROM
-FROM $BUILD_FROM
+FROM ${BUILD_FROM}
 
 ENV LANG C.UTF-8
 
 RUN apt-get update && \
     apt-get install wget -y
 
-RUN mkdir -p /etc/apt/keyrings && \
-    wget -q -O /etc/apt/keyrings/ebusd.gpg \
-    https://raw.githubusercontent.com/john30/ebusd-debian/master/ebusd.gpg
-RUN wget -O /etc/apt/sources.list.d/ebusd.list \
-    https://raw.githubusercontent.com/john30/ebusd-debian/master/ebusd-default-bookworm.list
+ARG EBUSD_VERSION=24.1
 
-RUN apt-get install ebusd libmosquitto-dev libssl-dev -y
+ARG ARCH
+
+RUN case ${ARCH} in \
+ "amd64") \
+    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_amd64-bookworm.deb && \
+    dpkg -i ebusd-${EBUSD_VERSION}_amd64-bookworm.deb ;; \
+ "arm64") \
+    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_arm64-bookworm.deb && \
+    dpkg -i ebusd-${EBUSD_VERSION}_aarch64-bookworm.deb ;; \
+ "armv7") \
+    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armv7-bookworm.deb && \
+    dpkg -i ebusd-${EBUSD_VERSION}_armv7-bookworm.deb ;; \
+ "armhf") \
+    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armhf-bookworm.deb && \
+    dpkg -i ebusd-${EBUSD_VERSION}_armv7-bookworm.deb ;; \
+ "i386") \
+    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_386-bookworm.deb && \
+    dpkg -i ebusd-${EBUSD_VERSION}_386-bookworm.deb ;; \
+ *) echo "Unsupported architecture"; exit 1 ;; \
+ esac
+
+RUN apt-get install libmosquitto-dev libssl-dev -y
 
 LABEL Description="ebusd"
 
