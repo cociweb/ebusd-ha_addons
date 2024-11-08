@@ -12,24 +12,27 @@ ARG ARCH
 
 RUN case ${ARCH} in \
  "amd64") \
-    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_amd64-bookworm.deb && \
-    dpkg -i ebusd-${EBUSD_VERSION}_amd64-bookworm.deb ;; \
- "arm64") \
-    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_arm64-bookworm.deb && \
-    dpkg -i ebusd-${EBUSD_VERSION}_aarch64-bookworm.deb ;; \
+    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_amd64-bookworm.deb && \
+    dpkg -i ebusd.deb  ;; \
+ "aarch64") \
+    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_arm64-bookworm.deb && \
+    dpkg -i ebusd.deb  ;; \
  "armv7") \
-    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armv7-bookworm.deb && \
-    dpkg -i ebusd-${EBUSD_VERSION}_armv7-bookworm.deb ;; \
+    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armv7-bookworm.deb && \
+    dpkg -i ebusd.deb  ;; \
  "armhf") \
-    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armhf-bookworm.deb && \
-    dpkg -i ebusd-${EBUSD_VERSION}_armv7-bookworm.deb ;; \
+    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armhf-bookworm.deb && \
+    dpkg -i ebusd.deb  ;; \
  "i386") \
-    wget https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_386-bookworm.deb && \
-    dpkg -i ebusd-${EBUSD_VERSION}_386-bookworm.deb ;; \
+    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_386-bookworm.deb && \
+    dpkg -i ebusd.deb  ;; \
  *) echo "Unsupported architecture"; exit 1 ;; \
  esac
 
-RUN apt-get install libmosquitto-dev libssl-dev -y
+RUN apt-get install -y libmosquitto-dev libssl-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -f ebusd.deb
+
 
 LABEL Description="ebusd"
 
