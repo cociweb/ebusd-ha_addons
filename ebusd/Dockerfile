@@ -3,12 +3,14 @@ FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" \
-    >> /etc/apk/repositories
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" \
-    >> /etc/apk/repositories
+RUN sudo mkdir -p /etc/apt/keyrings && \
+    sudo wget -q -O /etc/apt/keyrings/ebusd.gpg \
+    https://raw.githubusercontent.com/john30/ebusd-debian/master/ebusd.gpg
+RUN sudo wget -O /etc/apt/sources.list.d/ebusd.list \
+    https://raw.githubusercontent.com/john30/ebusd-debian/master/ebusd-default-bookworm.list
 
-RUN apk add --no-cache ebusd=23.2-r0
+RUN apt get update && \
+    apt-get install ebusd libmosquitto-dev libssl-dev -y
 
 LABEL Description="ebusd"
 
