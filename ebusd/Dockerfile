@@ -7,9 +7,11 @@ RUN apt-get update && \
     apt-get install wget -y
 
 
-ARG \
-    ARCH \
-    EBUSD_VERSION=24.1
+ARG BUILD_ARCH
+ENV ARCH=${BUILD_ARCH}
+RUN echo "Building for architecture: ${ARCH}"
+
+ARG EBUSD_VERSION=24.1
 
 
 RUN \
