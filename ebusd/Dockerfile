@@ -6,28 +6,31 @@ ENV LANG C.UTF-8
 RUN apt-get update && \
     apt-get install wget -y
 
-ARG EBUSD_VERSION=24.1
 
-ARG ARCH
+ARG \
+    ARCH \
+    EBUSD_VERSION=24.1
 
-RUN case ${ARCH} in \
- "amd64") \
-    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_amd64-bookworm.deb && \
-    dpkg -i ebusd.deb  ;; \
- "aarch64") \
-    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_arm64-bookworm.deb && \
-    dpkg -i ebusd.deb  ;; \
- "armv7") \
-    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armv7-bookworm.deb && \
-    dpkg -i ebusd.deb  ;; \
- "armhf") \
-    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armhf-bookworm.deb && \
-    dpkg -i ebusd.deb  ;; \
- "i386") \
-    wget -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_386-bookworm.deb && \
-    dpkg -i ebusd.deb  ;; \
- *) echo "Unsupported architecture"; exit 1 ;; \
- esac
+
+RUN \
+    if [ "${BUILD_ARCH}" = "amd64" ]; then \
+        wget -q -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_amd64-bookworm.deb && \
+        dpkg -i ebusd.deb  ; \
+    elif [ "${BUILD_ARCH}" = "aarch64" ]; then \
+        wget -q -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_arm64-bookworm.deb && \
+        dpkg -i ebusd.deb  ; \
+    elif [ "${BUILD_ARCH}" = "armhf" ] || [ "${BUILD_ARCH}" = "armv7" ]; then \
+        wget -q -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armv7-bookworm.deb && \
+        dpkg -i ebusd.deb  ; \
+    elif [ "${BUILD_ARCH}" = "i386" ]; then \
+        wget -q -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_386-bookworm.deb && \
+        dpkg -i ebusd.deb  ; \
+#    elif [ "${BUILD_ARCH}" = "armhf" ]; then \
+#        wget -q -O ebusd.deb https://github.com/john30/ebusd/releases/download/${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_armv6l-buster.deb        && \
+#        dpkg -i ebusd.deb  ; \
+    else \
+        echo "Unsupported architecture"; exit 1; \
+    fi
 
 RUN apt-get install -y libmosquitto-dev libssl-dev \
     && rm -rf /var/lib/apt/lists/* \
